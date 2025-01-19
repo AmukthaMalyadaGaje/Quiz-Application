@@ -1,65 +1,73 @@
-import React, { useState, useEffect } from "react";
-import QuizPage from "./components/QuizPage";
-import StartPage from "./components/StartPage";
-import ReportPage from "./components/ReportPage";
+import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import ReportPage from "./pages/ReportPage";
+import Navbar from "./components/Navbar";
+import StartPage from "./pages/StartPage";
+import QuizPage from "./pages/QuizPage";
 
 const App = () => {
-  const [quizStarted, setQuizStarted] = useState(false);
-  const [quizFinished, setQuizFinished] = useState(false);
+  const [email, setEmail] = useState("");
+  const [userAnswers, setUserAnswers] = useState([]);
   const [questions, setQuestions] = useState([]);
-  const [userAnswers, setUserAnswers] = useState({});
-  const [timeRemaining, setTimeRemaining] = useState(30 * 60); // 30 minutes
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
-  const fetchQuizData = async () => {
-    try {
-      const response = await fetch(
-        "https://opentdb.com/api.php?amount=15&type=multiple"
-      );
-      const data = await response.json();
-
-      const formattedQuestions = data.results.map((question) => {
-        const choices = [
-          ...question.incorrect_answers,
-          question.correct_answer,
-        ];
-        return {
-          question: question.question,
-          choices: choices.sort(() => Math.random() - 0.5),
-          correctAnswer: question.correct_answer,
-        };
-      });
-
-      setQuestions(formattedQuestions);
-    } catch (error) {
-      console.error("Error fetching quiz data:", error);
-    }
+  const resetQuiz = () => {
+    setUserAnswers([]);
+    setQuestions([]);
+    setQuizCompleted(false);
   };
 
-  useEffect(() => {
-    if (quizStarted) {
-      fetchQuizData();
-    }
-  }, [quizStarted]);
-
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
-      {!quizStarted && !quizFinished && (
-        <StartPage setQuizStarted={setQuizStarted} />
-      )}
-      {quizStarted && !quizFinished && (
-        <QuizPage
-          questions={questions}
-          setUserAnswers={setUserAnswers}
-          userAnswers={userAnswers}
-          timeRemaining={timeRemaining}
-          setQuizFinished={setQuizFinished}
-          setTimeRemaining={setTimeRemaining}
+    <Router>
+      {email && <Navbar resetQuiz={resetQuiz} />}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <StartPage
+              setEmail={setEmail}
+              setQuestions={setQuestions}
+              questions={questions}
+            />
+          }
         />
-      )}
-      {quizFinished && (
-        <ReportPage questions={questions} userAnswers={userAnswers} />
-      )}
-    </div>
+        <Route
+          path="/quiz"
+          element={
+            email ? (
+              <QuizPage
+                questions={questions}
+                setQuestions={setQuestions}
+                userAnswers={userAnswers}
+                setUserAnswers={setUserAnswers}
+                setQuizCompleted={setQuizCompleted}
+              />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/report"
+          element={
+            quizCompleted ? (
+              <ReportPage
+                questions={questions}
+                userAnswers={userAnswers}
+                resetQuiz={resetQuiz}
+              />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+      </Routes>
+    </Router>
   );
 };
 

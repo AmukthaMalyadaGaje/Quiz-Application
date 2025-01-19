@@ -1,23 +1,29 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const Timer = ({ onTimeUp }) => {
-  const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes in seconds
+  const [time, setTime] = useState(30 * 60); // 30 minutes in seconds
 
   useEffect(() => {
-    if (timeLeft <= 0) {
+    if (time <= 0) {
       onTimeUp();
       return;
     }
-    const interval = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
-    return () => clearInterval(interval);
-  }, [timeLeft, onTimeUp]);
 
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
+    const timer = setInterval(() => {
+      setTime((prevTime) => prevTime - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [time, onTimeUp]);
+
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
 
   return (
-    <div className="absolute top-4 right-4 text-xl font-bold">
-      {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+    <div className="text-center">
+      <h2 className="text-2xl font-bold">
+        Time Left: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+      </h2>
     </div>
   );
 };
