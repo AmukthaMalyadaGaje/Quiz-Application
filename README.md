@@ -79,11 +79,12 @@ src/
 ├── App.jsx                 # Main application component
 ├── index.css               # Tailwind CSS imports
 └── main.jsx                # React entry point
+```
 Technologies Used
 React: Frontend framework.
 Vite: Development server and build tool.
 Tailwind CSS: Styling framework.
-```
+
 Assumptions and Challenges
 Assumptions:
 
