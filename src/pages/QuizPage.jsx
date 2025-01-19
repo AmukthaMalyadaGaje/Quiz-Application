@@ -39,6 +39,18 @@ const QuizPage = ({
     setCurrentQuestionIndex(index);
   };
 
+  const handleNext = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  };
+
   if (!quizStarted) {
     return (
       <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
@@ -70,9 +82,33 @@ const QuizPage = ({
       ) : (
         <div>Loading questions...</div>
       )}
+      <div className="flex justify-between w-full max-w-2xl mt-6">
+        <button
+          onClick={handlePrevious}
+          disabled={currentQuestionIndex === 0}
+          className={`py-2 px-4 rounded font-bold ${
+            currentQuestionIndex === 0
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 text-white hover:bg-blue-600"
+          }`}
+        >
+          Previous
+        </button>
+        <button
+          onClick={handleNext}
+          disabled={currentQuestionIndex === questions.length - 1}
+          className={`py-2 px-4 rounded font-bold ${
+            currentQuestionIndex === questions.length - 1
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 text-white hover:bg-blue-600"
+          }`}
+        >
+          Next
+        </button>
+      </div>
       <button
         onClick={handleSubmit}
-        className="mt-6 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"
+        className="mt-6 bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600"
       >
         Submit Quiz
       </button>

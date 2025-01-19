@@ -6,7 +6,7 @@ const Navbar = ({ resetQuiz }) => {
 
   const handleRestart = () => {
     resetQuiz();
-    navigate("/quiz");
+    navigate("/");
   };
 
   return (
